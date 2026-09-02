@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Manjeet Natural TTS</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#202124}
+    .wrap{max-width:850px;margin:25px auto;padding:18px}
+    .card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+    h1{margin:0 0 6px;font-size:28px}
+    .sub{color:#666;margin-bottom:20px}
+    label{display:block;font-weight:700;margin:15px 0 7px}
+    textarea{width:100%;min-height:230px;border:1px solid #ccc;border-radius:10px;padding:14px;font-size:17px;resize:vertical}
+    select,input[type=range]{width:100%}
+    select{padding:11px;border:1px solid #ccc;border-radius:9px;background:#fff;font-size:16px}
+    input[type=range]{margin:8px 0}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+    .value{font-weight:normal;color:#555}
+    button{border:0;border-radius:10px;padding:13px 18px;font-size:16px;cursor:pointer}
+    .generate{width:100%;margin-top:20px;font-weight:700}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    #status{margin-top:15px;padding:12px;border-radius:9px;background:#f1f3f4;display:none}
+    #result{margin-top:18px;display:none}
+    audio{width:100%;margin:10px 0}
+    .download{display:inline-block;text-decoration:none;padding:12px 18px;border-radius:9px;background:#1a73e8;color:#fff}
+    .hint{font-size:13px;color:#777;margin-top:5px}
+    @media(max-width:650px){.grid{grid-template-columns:1fr}.wrap{margin:5px auto;padding:10px}.card{padding:16px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>🎙️ Manjeet Natural TTS</h1>
+    <div class="sub">Hindi text ko natural narration MP3 me convert karein</div>
+
+    <label for="text">📝 Script</label>
+    <textarea id="text" placeholder="Yahan apni Hindi script paste karein..."></textarea>
+    <div class="hint">Maximum 12,000 characters</div>
+
+    <div class="grid">
+      <div>
+        <label for="gender">👤 Voice</label>
+        <select id="gender">
+          <option value="female">👩 Female</option>
+          <option value="male">👨 Male</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="style">🎙️ Narration Style</label>
+        <select id="style">
+          <option value="natural">Natural</option>
+          <option value="story">📖 Story</option>
+          <option value="suspense">😱 Suspense</option>
+          <option value="fast">⚡ Fast</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="type">🔊 Voice Type</label>
+        <select id="type">
+          <option value="normal">Normal</option>
+          <option value="heavy">Heavy / Bhari</option>
+          <option value="thin">Thin / Patli</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="speed">⚡ Speed: <span class="value" id="speedValue">0.94x</span></label>
+        <input id="speed" type="range" min="0.5" max="2" step="0.01" value="0.94">
+      </div>
+
+      <div>
+        <label for="tone">🎚️ Tone: <span class="value" id="toneValue">0 Hz</span></label>
+        <input id="tone" type="range" min="-35" max="35" step="1" value="0">
+      </div>
+    </div>
+
+    <button class="generate" id="generate">🎵 Generate MP3</button>
+
+    <div id="status"></div>
+
+    <div id="result">
+      <audio id="audio" controls></audio>
+      <br>
+      <a id="download" class="download" href="#" download>⬇️ Download MP3</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const speed = document.getElementById('speed');
+const speedValue = document.getElementById('speedValue');
+const tone = document.getElementById('tone');
+const toneValue = document.getElementById('toneValue');
+const style = document.getElementById('style');
+
+function updateSpeed(){
+  speedValue.textContent = Number(speed.value).toFixed(2) + 'x';
+}
+function updateTone(){
+  toneValue.textContent = tone.value + ' Hz';
+}
+speed.addEventListener('input', updateSpeed);
+tone.addEventListener('input', updateTone);
+
+style.addEventListener('change', function(){
+  const defaults = {
+    natural: 0.94,
+    story: 0.90,
+    suspense: 0.84,
+    fast: 1.12
+  };
+  speed.value = defaults[this.value] || 0.94;
+  updateSpeed();
+});
+
+updateSpeed();
+updateTone();
+
+document.getElementById('generate').addEventListener('click', async function(){
+  const btn = this;
+  const status = document.getElementById('status');
+  const result = document.getElementById('result');
+  const text = document.getElementById('text').value.trim();
+
+  if(!text){
+    status.style.display='block';
+    status.textContent='❌ Pehle text paste karein.';
+    return;
+  }
+
+  if(text.length > 12000){
+    status.style.display='block';
+    status.textContent='❌ Maximum 12,000 characters allowed hain.';
+    return;
+  }
+
+  btn.disabled=true;
+  status.style.display='block';
+  status.textContent='⏳ Voice generate ho rahi hai...';
+  result.style.display='none';
+
+  try{
+    const response = await fetch('/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        text:text,
+        gender:document.getElementById('gender').value,
+        style:style.value,
+        type:document.getElementById('type').value,
+        speed:Number(speed.value),
+        tone:Number(tone.value)
+      })
+    });
+
+    const data = await response.json();
+
+    if(!response.ok || !data.ok){
+      throw new Error(data.error || 'TTS generate nahi hua.');
+    }
+
+    const audio = document.getElementById('audio');
+    const download = document.getElementById('download');
+
+    audio.src = data.url;
+    audio.load();
+
+    download.href = '/download/' + encodeURIComponent(data.filename);
+    download.download = data.filename;
+
+    result.style.display='block';
+    status.textContent='✅ MP3 ready hai!';
+  }catch(err){
+    status.textContent='❌ ' + err.message;
+  }finally{
+    btn.disabled=false;
+  }
+});
+</script>
+</body>
+</html>

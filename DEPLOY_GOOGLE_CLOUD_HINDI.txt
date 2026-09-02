@@ -1,0 +1,18 @@
+MANJEET TTS - GOOGLE CLOUD RUN DEPLOYMENT
+
+1. Google Cloud Console me project banao/choose karo.
+2. Billing account enable karna pad sakta hai, even when using eligible free usage.
+3. Cloud Shell kholo.
+4. Project folder ko Cloud Shell me upload karo ya Cloud Storage/GitHub se lao.
+5. Project folder ke andar ye command chalao:
+
+   gcloud run deploy manjeet-tts --source . --region asia-south1 --allow-unauthenticated
+
+6. Deployment ke baad Google Cloud ek HTTPS URL dega.
+7. Us URL ko phone ke Chrome me kholo.
+8. Ab laptop band reh sakta hai. Phone ko sirf internet chahiye. Same Wi-Fi ki zarurat nahi.
+
+IMPORTANT:
+- edge-tts Microsoft online service ko call karta hai, isliye Cloud Run ko internet access chahiye.
+- Cloud Run ka local output folder permanent storage nahi hai; MP3 ko long-term save karna ho to Cloud Storage add karna hoga.
+- Public URL hone par koi bhi URL jaankar use kar sakta hai. Private use ke liye baad me authentication/rate limit add karna better hai.

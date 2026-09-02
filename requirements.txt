@@ -1,0 +1,11 @@
+Flask==2.2.5
+Werkzeug==2.2.3
+Jinja2==3.1.6
+MarkupSafe==2.1.5
+click==8.1.7
+itsdangerous==2.1.2
+blinker==1.7.0
+edge-tts==6.1.19
+aiohttp==3.8.6
+
+gunicorn==23.0.0
