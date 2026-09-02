@@ -1,185 +1,97 @@
 <!doctype html>
 <html lang="hi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Manjeet Natural TTS</title>
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#202124}
-    .wrap{max-width:850px;margin:25px auto;padding:18px}
-    .card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
-    h1{margin:0 0 6px;font-size:28px}
-    .sub{color:#666;margin-bottom:20px}
-    label{display:block;font-weight:700;margin:15px 0 7px}
-    textarea{width:100%;min-height:230px;border:1px solid #ccc;border-radius:10px;padding:14px;font-size:17px;resize:vertical}
-    select,input[type=range]{width:100%}
-    select{padding:11px;border:1px solid #ccc;border-radius:9px;background:#fff;font-size:16px}
-    input[type=range]{margin:8px 0}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-    .value{font-weight:normal;color:#555}
-    button{border:0;border-radius:10px;padding:13px 18px;font-size:16px;cursor:pointer}
-    .generate{width:100%;margin-top:20px;font-weight:700}
-    button:disabled{opacity:.6;cursor:not-allowed}
-    #status{margin-top:15px;padding:12px;border-radius:9px;background:#f1f3f4;display:none}
-    #result{margin-top:18px;display:none}
-    audio{width:100%;margin:10px 0}
-    .download{display:inline-block;text-decoration:none;padding:12px 18px;border-radius:9px;background:#1a73e8;color:#fff}
-    .hint{font-size:13px;color:#777;margin-top:5px}
-    @media(max-width:650px){.grid{grid-template-columns:1fr}.wrap{margin:5px auto;padding:10px}.card{padding:16px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manjeet TTS Pro</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#202124}
+.wrap{max-width:900px;margin:20px auto;padding:14px}.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+h1{margin:0 0 5px;font-size:28px}.sub{color:#666;margin-bottom:20px}
+label{display:block;font-weight:700;margin:14px 0 7px}textarea{width:100%;min-height:240px;border:1px solid #ccc;border-radius:10px;padding:14px;font-size:17px;resize:vertical}
+select,input[type=range]{width:100%}select{padding:11px;border:1px solid #ccc;border-radius:9px;background:#fff;font-size:16px}
+input[type=range]{margin:8px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.value{font-weight:normal;color:#555}
+button{border:0;border-radius:10px;padding:13px 18px;font-size:16px;cursor:pointer}.generate{width:100%;margin-top:20px;font-weight:700}
+button:disabled{opacity:.6;cursor:not-allowed}#status{margin-top:15px;padding:12px;border-radius:9px;background:#f1f3f4;display:none}
+#result{margin-top:18px;display:none}audio{width:100%;margin:10px 0}.download{display:inline-block;text-decoration:none;padding:12px 18px;border-radius:9px;background:#1a73e8;color:#fff}
+.hint{font-size:13px;color:#777;margin-top:5px}.badge{display:inline-block;padding:5px 9px;border-radius:20px;background:#eef3ff;font-size:12px;margin-top:5px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.wrap{margin:5px auto;padding:8px}.card{padding:16px}h1{font-size:24px}}
+</style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <h1>🎙️ Manjeet Natural TTS</h1>
-    <div class="sub">Hindi text ko natural narration MP3 me convert karein</div>
+<div class="wrap"><div class="card">
+<h1>🎙️ Manjeet TTS Pro</h1>
+<div class="sub">Hindi script → natural MP3 narration</div>
 
-    <label for="text">📝 Script</label>
-    <textarea id="text" placeholder="Yahan apni Hindi script paste karein..."></textarea>
-    <div class="hint">Maximum 12,000 characters</div>
+<label for="text">📝 Script</label>
+<textarea id="text" placeholder="Yahan apni Hindi script paste karein..."></textarea>
+<div class="hint">Maximum 12,000 characters</div>
 
-    <div class="grid">
-      <div>
-        <label for="gender">👤 Voice</label>
-        <select id="gender">
-          <option value="female">👩 Female</option>
-          <option value="male">👨 Male</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="style">🎙️ Narration Style</label>
-        <select id="style">
-          <option value="natural">Natural</option>
-          <option value="story">📖 Story</option>
-          <option value="suspense">😱 Suspense</option>
-          <option value="fast">⚡ Fast</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="type">🔊 Voice Type</label>
-        <select id="type">
-          <option value="normal">Normal</option>
-          <option value="heavy">Heavy / Bhari</option>
-          <option value="thin">Thin / Patli</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="speed">⚡ Speed: <span class="value" id="speedValue">0.94x</span></label>
-        <input id="speed" type="range" min="0.5" max="2" step="0.01" value="0.94">
-      </div>
-
-      <div>
-        <label for="tone">🎚️ Tone: <span class="value" id="toneValue">0 Hz</span></label>
-        <input id="tone" type="range" min="-35" max="35" step="1" value="0">
-      </div>
-    </div>
-
-    <button class="generate" id="generate">🎵 Generate MP3</button>
-
-    <div id="status"></div>
-
-    <div id="result">
-      <audio id="audio" controls></audio>
-      <br>
-      <a id="download" class="download" href="#" download>⬇️ Download MP3</a>
-    </div>
-  </div>
+<div class="grid">
+<div>
+<label for="voice">🎭 Voice Preset</label>
+<select id="voice">
+<option value="aarav">👨 Aarav — Natural Male</option>
+<option value="kabir">👨 Kabir — Deep Male</option>
+<option value="rohan">👨 Rohan — Energetic Male</option>
+<option value="vikram">👨 Vikram — Heavy Male</option>
+<option value="meera">👩 Meera — Soft Female</option>
+<option value="kavya">👩 Kavya — Natural Female</option>
+<option value="ananya">👩 Ananya — Bright Female</option>
+</select>
+</div>
+<div>
+<label for="style">🎙️ Narration Style</label>
+<select id="style">
+<option value="natural">Natural</option>
+<option value="story">📖 Story</option>
+<option value="suspense">😱 Suspense</option>
+<option value="emotional">❤️ Emotional</option>
+<option value="fast">⚡ Fast</option>
+</select>
+</div>
+<div>
+<label for="speed">⚡ Speed: <span class="value" id="speedValue">1.00x</span></label>
+<input id="speed" type="range" min="0.5" max="1.5" step="0.01" value="1">
+</div>
+<div>
+<label for="pitch">🎚️ Voice Tone: <span class="value" id="pitchValue">1.00</span></label>
+<input id="pitch" type="range" min="0.75" max="1.25" step="0.01" value="1">
+</div>
 </div>
 
+<div class="badge">☁️ Cloud version — laptop ON रखने की जरूरत नहीं</div>
+<button class="generate" id="generate">🎵 Generate MP3</button>
+<div id="status"></div>
+<div id="result"><audio id="audio" controls></audio><br>
+<a id="download" class="download" href="#" download>⬇️ Download MP3</a></div>
+</div></div>
+
 <script>
-const speed = document.getElementById('speed');
-const speedValue = document.getElementById('speedValue');
-const tone = document.getElementById('tone');
-const toneValue = document.getElementById('toneValue');
-const style = document.getElementById('style');
+const voice=document.getElementById('voice'),style=document.getElementById('style');
+const speed=document.getElementById('speed'),pitch=document.getElementById('pitch');
+const speedValue=document.getElementById('speedValue'),pitchValue=document.getElementById('pitchValue');
+const presets={
+aarav:[.98,.90],kabir:[.92,.86],rohan:[1.04,.94],vikram:[.88,.82],
+meera:[1.00,1.10],kavya:[.96,1.06],ananya:[1.05,1.14]};
+function update(){speedValue.textContent=Number(speed.value).toFixed(2)+'x';pitchValue.textContent=Number(pitch.value).toFixed(2)}
+voice.addEventListener('change',()=>{let p=presets[voice.value];speed.value=p[0];pitch.value=p[1];update()});
+style.addEventListener('change',()=>{let d={natural:1,story:.94,suspense:.82,emotional:.88,fast:1.18};speed.value=d[style.value];update()});
+speed.addEventListener('input',update);pitch.addEventListener('input',update);update();
 
-function updateSpeed(){
-  speedValue.textContent = Number(speed.value).toFixed(2) + 'x';
-}
-function updateTone(){
-  toneValue.textContent = tone.value + ' Hz';
-}
-speed.addEventListener('input', updateSpeed);
-tone.addEventListener('input', updateTone);
-
-style.addEventListener('change', function(){
-  const defaults = {
-    natural: 0.94,
-    story: 0.90,
-    suspense: 0.84,
-    fast: 1.12
-  };
-  speed.value = defaults[this.value] || 0.94;
-  updateSpeed();
-});
-
-updateSpeed();
-updateTone();
-
-document.getElementById('generate').addEventListener('click', async function(){
-  const btn = this;
-  const status = document.getElementById('status');
-  const result = document.getElementById('result');
-  const text = document.getElementById('text').value.trim();
-
-  if(!text){
-    status.style.display='block';
-    status.textContent='❌ Pehle text paste karein.';
-    return;
-  }
-
-  if(text.length > 12000){
-    status.style.display='block';
-    status.textContent='❌ Maximum 12,000 characters allowed hain.';
-    return;
-  }
-
-  btn.disabled=true;
-  status.style.display='block';
-  status.textContent='⏳ Voice generate ho rahi hai...';
-  result.style.display='none';
-
-  try{
-    const response = await fetch('/generate',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        text:text,
-        gender:document.getElementById('gender').value,
-        style:style.value,
-        type:document.getElementById('type').value,
-        speed:Number(speed.value),
-        tone:Number(tone.value)
-      })
-    });
-
-    const data = await response.json();
-
-    if(!response.ok || !data.ok){
-      throw new Error(data.error || 'TTS generate nahi hua.');
-    }
-
-    const audio = document.getElementById('audio');
-    const download = document.getElementById('download');
-
-    audio.src = data.url;
-    audio.load();
-
-    download.href = '/download/' + encodeURIComponent(data.filename);
-    download.download = data.filename;
-
-    result.style.display='block';
-    status.textContent='✅ MP3 ready hai!';
-  }catch(err){
-    status.textContent='❌ ' + err.message;
-  }finally{
-    btn.disabled=false;
-  }
+document.getElementById('generate').addEventListener('click',async function(){
+const btn=this,status=document.getElementById('status'),result=document.getElementById('result'),text=document.getElementById('text').value.trim();
+if(!text){status.style.display='block';status.textContent='❌ Pehle text paste karein.';return}
+if(text.length>12000){status.style.display='block';status.textContent='❌ Maximum 12,000 characters allowed hain.';return}
+btn.disabled=true;status.style.display='block';status.textContent='⏳ Voice generate ho rahi hai...';result.style.display='none';
+try{
+const r=await fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({text,voice:voice.value,style:style.value,speed:Number(speed.value),pitch:Number(pitch.value)})});
+const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||'TTS generate nahi hua.');
+document.getElementById('audio').src=d.url;document.getElementById('audio').load();
+const dl=document.getElementById('download');dl.href='/download/'+encodeURIComponent(d.filename);dl.download=d.filename;
+result.style.display='block';status.textContent='✅ '+d.voice+' voice ki MP3 ready hai!';
+}catch(e){status.textContent='❌ '+e.message}finally{btn.disabled=false}
 });
 </script>
-</body>
-</html>
+</body></html>
