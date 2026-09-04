@@ -17,6 +17,10 @@ def generate_audio():
         data = request.json
         text = data.get('text', '')
         voice = data.get('voice', 'hi-IN-SwaraNeural')
+        
+        # Valid edge-tts voices fallback check
+        if not voice or 'Neural' not in voice:
+            voice = 'hi-IN-SwaraNeural'
 
         if not text:
             return jsonify({'error': 'Text is required'}), 400
@@ -28,7 +32,7 @@ def generate_audio():
         asyncio.run(generate())
 
         return send_file(OUTPUT_FILE, mimetype="audio/mp3", as_attachment=True, download_name="speech.mp3")
-
+    
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
