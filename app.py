@@ -1,7 +1,6 @@
 ﻿import os
-import asyncio
 from flask import Flask, render_template, request, send_file, jsonify
-import edge_tts
+from gtts import gTTS
 
 app = Flask(__name__)
 
@@ -16,20 +15,14 @@ def generate_audio():
     try:
         data = request.json
         text = data.get('text', '')
-        voice = data.get('voice', 'hi-IN-SwaraNeural')
+        lang_code = data.get('lang', 'hi') # Default Hindi
         
-        # Valid edge-tts voices fallback check
-        if not voice or 'Neural' not in voice:
-            voice = 'hi-IN-SwaraNeural'
-
         if not text:
             return jsonify({'error': 'Text is required'}), 400
 
-        async def generate():
-            communicate = edge_tts.Communicate(text, voice)
-            await communicate.save(OUTPUT_FILE)
-
-        asyncio.run(generate())
+        # gTTS generation
+        tts = gTTS(text=text, lang=lang_code, slow=False)
+        tts.save(OUTPUT_FILE)
 
         return send_file(OUTPUT_FILE, mimetype="audio/mp3", as_attachment=True, download_name="speech.mp3")
     
