@@ -1,2 +1,3 @@
 Flask==3.0.2
 edge-tts==6.1.9
+gunicorn==21.2.0
